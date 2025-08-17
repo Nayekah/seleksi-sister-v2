@@ -1,0 +1,5 @@
+# One-liner untuk clean semua terkait project ini
+docker stop $(docker ps -q --filter ancestor=cobol-app) 2>/dev/null; \
+docker rm $(docker ps -aq --filter ancestor=cobol-app) 2>/dev/null; \
+docker rmi -f cobol-app 2>/dev/null; \
+docker system prune -f
