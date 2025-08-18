@@ -47,6 +47,8 @@ IDENTIFICATION DIVISION.
        77 RAI-FORMATTED         PIC ZZZ,ZZ9.99.
        77 MAX-SAFE-RAI          PIC 9(6)V99 VALUE 83333.33.
        77 IDR-OVERFLOW          PIC X VALUE "N".
+       77 AMOUNT-INPUT-STR      PIC X(9).
+       77 HAS-SIGN             PIC X VALUE "N".
 
        77 INTEREST-RATE         PIC 9V999 VALUE 0.010.
        77 INTEREST-AMOUNT       PIC 9(6)V99.
@@ -104,6 +106,13 @@ IDENTIFICATION DIVISION.
 
            MOVE IN-RECORD(1:6) TO IN-ACCOUNT
            MOVE IN-RECORD(7:3) TO IN-ACTION
+           MOVE IN-RECORD(10:9) TO AMOUNT-INPUT-STR
+           
+           MOVE "N" TO HAS-SIGN
+           IF AMOUNT-INPUT-STR(1:1) = "+" OR AMOUNT-INPUT-STR(1:1) = "-"
+               MOVE "Y" TO HAS-SIGN
+           END-IF
+           
            MOVE FUNCTION NUMVAL(IN-RECORD(10:9)) TO IN-AMOUNT.
 
        INTEREST-CALCULATION.
@@ -160,7 +169,10 @@ IDENTIFICATION DIVISION.
                PERFORM PROCESS-RECORDS
                IF MATCH-FOUND = "N"
                    IF IN-ACTION = "NEW"
-                       IF IN-AMOUNT > MAX-SAFE-RAI
+                       IF HAS-SIGN = "Y"
+                           MOVE "ACCOUNT CREATION REJECTED: SIGNS (+/-) NOT ALLOWED" 
+                               TO OUT-RECORD
+                       ELSE IF IN-AMOUNT > MAX-SAFE-RAI
                            MOVE "ACCOUNT CREATION REJECTED: IDR VALUE WOULD OVERFLOW" 
                                TO OUT-RECORD
                        ELSE
@@ -232,7 +244,10 @@ IDENTIFICATION DIVISION.
            
            EVALUATE IN-ACTION
                WHEN "DEP"
-                   IF IN-AMOUNT <= 0
+                   IF HAS-SIGN = "Y"
+                       MOVE "INVALID AMOUNT: SIGNS (+/-) NOT ALLOWED" 
+                           TO OUT-RECORD
+                   ELSE IF IN-AMOUNT <= 0
                        MOVE "INVALID AMOUNT: MUST BE POSITIVE NUMBER" 
                            TO OUT-RECORD
                    ELSE IF TMP-BALANCE + IN-AMOUNT > 999999.99
@@ -260,7 +275,10 @@ IDENTIFICATION DIVISION.
                        END-IF
                    END-IF
                WHEN "WDR"
-                   IF IN-AMOUNT <= 0
+                   IF HAS-SIGN = "Y"
+                       MOVE "INVALID AMOUNT: SIGNS (+/-) NOT ALLOWED" 
+                           TO OUT-RECORD
+                   ELSE IF IN-AMOUNT <= 0
                        MOVE "INVALID AMOUNT: MUST BE POSITIVE NUMBER" 
                            TO OUT-RECORD
                    ELSE IF IN-AMOUNT > TMP-BALANCE
