@@ -45,6 +45,8 @@ IDENTIFICATION DIVISION.
        77 IDR-VALUE             PIC 9(15)V99 COMP-3.
        77 IDR-FORMATTED         PIC Z,ZZZ,ZZZ,ZZZ,ZZ9.99.
        77 RAI-FORMATTED         PIC ZZZ,ZZ9.99.
+       77 MAX-SAFE-RAI          PIC 9(6)V99 VALUE 83333.33.
+       77 IDR-OVERFLOW          PIC X VALUE "N".
 
        77 INTEREST-RATE         PIC 9V999 VALUE 0.010.
        77 INTEREST-AMOUNT       PIC 9(6)V99.
@@ -158,19 +160,29 @@ IDENTIFICATION DIVISION.
                PERFORM PROCESS-RECORDS
                IF MATCH-FOUND = "N"
                    IF IN-ACTION = "NEW"
-                       PERFORM APPEND-ACCOUNT
-                       IF IN-AMOUNT = 0
-                           MOVE "ACCOUNT CREATED (0.00 RAI = IDR 0.00)" 
+                       IF IN-AMOUNT > MAX-SAFE-RAI
+                           MOVE "ACCOUNT CREATION REJECTED: IDR VALUE WOULD OVERFLOW" 
                                TO OUT-RECORD
                        ELSE
-                           PERFORM CALCULATE-IDR-VALUE-FOR-NEW
-                           MOVE IN-AMOUNT TO RAI-FORMATTED
-                           STRING "ACCOUNT CREATED | BAL: " DELIMITED SIZE
-                                  RAI-FORMATTED DELIMITED SIZE
-                                  " RAI (IDR " DELIMITED SIZE
-                                  IDR-FORMATTED DELIMITED SIZE
-                                  ")" DELIMITED SIZE
-                                  INTO OUT-RECORD
+                           PERFORM APPEND-ACCOUNT
+                           IF IN-AMOUNT = 0
+                               MOVE "ACCOUNT CREATED (0.00 RAI = IDR 0.00)" 
+                                   TO OUT-RECORD
+                           ELSE
+                               PERFORM CALCULATE-IDR-VALUE-FOR-NEW
+                               IF IDR-OVERFLOW = "Y"
+                                   MOVE "ACCOUNT CREATION ERROR: IDR CALCULATION OVERFLOW" 
+                                       TO OUT-RECORD
+                               ELSE
+                                   MOVE IN-AMOUNT TO RAI-FORMATTED
+                                   STRING "ACCOUNT CREATED | BAL: " DELIMITED SIZE
+                                          RAI-FORMATTED DELIMITED SIZE
+                                          " RAI (IDR " DELIMITED SIZE
+                                          IDR-FORMATTED DELIMITED SIZE
+                                          ")" DELIMITED SIZE
+                                          INTO OUT-RECORD
+                               END-IF
+                           END-IF
                        END-IF
                    ELSE
                        MOVE "ACCOUNT NOT FOUND" TO OUT-RECORD
@@ -216,6 +228,7 @@ IDENTIFICATION DIVISION.
        APPLY-ACTION.
            MOVE ACC-BALANCE TO TMP-BALANCE
            MOVE "N" TO UPDATED
+           MOVE "N" TO IDR-OVERFLOW
            
            EVALUATE IN-ACTION
                WHEN "DEP"
@@ -225,17 +238,26 @@ IDENTIFICATION DIVISION.
                    ELSE IF TMP-BALANCE + IN-AMOUNT > 999999.99
                        MOVE "DEPOSIT REJECTED: BALANCE WOULD EXCEED MAXIMUM" 
                            TO OUT-RECORD
+                   ELSE IF TMP-BALANCE + IN-AMOUNT > MAX-SAFE-RAI
+                       MOVE "DEPOSIT REJECTED: IDR VALUE WOULD OVERFLOW" 
+                           TO OUT-RECORD
                    ELSE
                        ADD IN-AMOUNT TO TMP-BALANCE
                        PERFORM CALCULATE-IDR-VALUE
-                       MOVE TMP-BALANCE TO RAI-FORMATTED
-                       STRING "DEPOSITED | BAL: " DELIMITED SIZE
-                              RAI-FORMATTED DELIMITED SIZE
-                              " RAI (IDR " DELIMITED SIZE
-                              IDR-FORMATTED DELIMITED SIZE
-                              ")" DELIMITED SIZE
-                              INTO OUT-RECORD
-                       MOVE "Y" TO UPDATED
+                       IF IDR-OVERFLOW = "Y"
+                           MOVE "DEPOSIT REJECTED: IDR CALCULATION OVERFLOW" 
+                               TO OUT-RECORD
+                           SUBTRACT IN-AMOUNT FROM TMP-BALANCE
+                       ELSE
+                           MOVE TMP-BALANCE TO RAI-FORMATTED
+                           STRING "DEPOSITED | BAL: " DELIMITED SIZE
+                                  RAI-FORMATTED DELIMITED SIZE
+                                  " RAI (IDR " DELIMITED SIZE
+                                  IDR-FORMATTED DELIMITED SIZE
+                                  ")" DELIMITED SIZE
+                                  INTO OUT-RECORD
+                           MOVE "Y" TO UPDATED
+                       END-IF
                    END-IF
                WHEN "WDR"
                    IF IN-AMOUNT <= 0
@@ -246,25 +268,36 @@ IDENTIFICATION DIVISION.
                    ELSE
                        SUBTRACT IN-AMOUNT FROM TMP-BALANCE
                        PERFORM CALCULATE-IDR-VALUE
-                       MOVE TMP-BALANCE TO RAI-FORMATTED
-                       STRING "WITHDREW | BAL: " DELIMITED SIZE
-                              RAI-FORMATTED DELIMITED SIZE
-                              " RAI (IDR " DELIMITED SIZE
-                              IDR-FORMATTED DELIMITED SIZE
-                              ")" DELIMITED SIZE
-                              INTO OUT-RECORD
-                       MOVE "Y" TO UPDATED
+                       IF IDR-OVERFLOW = "Y"
+                           MOVE "WITHDRAW ERROR: IDR CALCULATION OVERFLOW" 
+                               TO OUT-RECORD
+                           ADD IN-AMOUNT TO TMP-BALANCE
+                       ELSE
+                           MOVE TMP-BALANCE TO RAI-FORMATTED
+                           STRING "WITHDREW | BAL: " DELIMITED SIZE
+                                  RAI-FORMATTED DELIMITED SIZE
+                                  " RAI (IDR " DELIMITED SIZE
+                                  IDR-FORMATTED DELIMITED SIZE
+                                  ")" DELIMITED SIZE
+                                  INTO OUT-RECORD
+                           MOVE "Y" TO UPDATED
+                       END-IF
                    END-IF
                WHEN "BAL"
                    PERFORM CALCULATE-IDR-VALUE
-                   MOVE SPACES TO OUT-RECORD
-                   MOVE TMP-BALANCE TO RAI-FORMATTED
-                   STRING "BALANCE: " DELIMITED SIZE
-                          RAI-FORMATTED DELIMITED SIZE
-                          " RAI | IDR " DELIMITED SIZE
-                          IDR-FORMATTED DELIMITED SIZE
-                          INTO OUT-RECORD
-                   MOVE "Y" TO UPDATED
+                   IF IDR-OVERFLOW = "Y"
+                       MOVE "BALANCE ERROR: IDR VALUE TOO LARGE TO DISPLAY" 
+                           TO OUT-RECORD
+                   ELSE
+                       MOVE SPACES TO OUT-RECORD
+                       MOVE TMP-BALANCE TO RAI-FORMATTED
+                       STRING "BALANCE: " DELIMITED SIZE
+                              RAI-FORMATTED DELIMITED SIZE
+                              " RAI | IDR " DELIMITED SIZE
+                              IDR-FORMATTED DELIMITED SIZE
+                              INTO OUT-RECORD
+                       MOVE "Y" TO UPDATED
+                   END-IF
                WHEN OTHER
                    MOVE "UNKNOWN ACTION" TO OUT-RECORD
            END-EVALUATE
@@ -288,12 +321,34 @@ IDENTIFICATION DIVISION.
            CLOSE ACC-FILE.
 
        CALCULATE-IDR-VALUE.
-           COMPUTE IDR-VALUE = TMP-BALANCE * RAI-TO-IDR
-           MOVE IDR-VALUE TO IDR-FORMATTED.
+           MOVE "N" TO IDR-OVERFLOW
+           
+           IF TMP-BALANCE > MAX-SAFE-RAI
+               MOVE "Y" TO IDR-OVERFLOW
+           ELSE
+               COMPUTE IDR-VALUE = TMP-BALANCE * RAI-TO-IDR
+               
+               IF IDR-VALUE > 9999999999999.99
+                   MOVE "Y" TO IDR-OVERFLOW
+               ELSE
+                   MOVE IDR-VALUE TO IDR-FORMATTED
+               END-IF
+           END-IF.
 
        CALCULATE-IDR-VALUE-FOR-NEW.
-           COMPUTE IDR-VALUE = IN-AMOUNT * RAI-TO-IDR
-           MOVE IDR-VALUE TO IDR-FORMATTED.
+           MOVE "N" TO IDR-OVERFLOW
+           
+           IF IN-AMOUNT > MAX-SAFE-RAI
+               MOVE "Y" TO IDR-OVERFLOW
+           ELSE
+               COMPUTE IDR-VALUE = IN-AMOUNT * RAI-TO-IDR
+               
+               IF IDR-VALUE > 9999999999999.99
+                   MOVE "Y" TO IDR-OVERFLOW
+               ELSE
+                   MOVE IDR-VALUE TO IDR-FORMATTED
+               END-IF
+           END-IF.
 
        FINALIZE.
            IF UPDATED = "Y"
