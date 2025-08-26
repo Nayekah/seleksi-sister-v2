@@ -243,60 +243,76 @@
 - Docker
 - VPS (Virtual Private Server, if you want to deploy it)
 
-### Running the Application
+<br/>
+
+### Running the Application (local)
 1. Clone this repo
    ```bash
-   https://github.com/Nayekah/seleksi-sister.git
+   https://github.com/Nayekah/seleksi-sister-v2.git
    ```
 
 2. Navigate to the cloned repository.
    ```bash
-   cd seleksi-sister
-   cd "Bagian-B"
-   cd "Mandelbrot of Madness"
-   cd src
+   cd seleksi-sister-v2
+   cd "Ngalegaan Kakawasan, Tamamo Silang - Sunda Priangan"/
    ```
    
 3. Do
    ```dotenv
-   make cli (to make cli binary)
-   make gui (to make gui binary)
+   make all
+   make run
+   ```
 
-   # Or
+4. Access the server on http://localhost:6969/main
 
-   make all (to make both)
+<br/>
+
+### Running the Application (remote)
+In your VPS, do:
+
+1. Clone this repo
+   ```bash
+   https://github.com/Nayekah/seleksi-sister-v2.git
+   ```
+
+2. Navigate to the cloned repository.
+   ```bash
+   cd seleksi-sister-v2
+   cd "Ngalegaan Kakawasan, Tamamo Silang - Sunda Priangan"/
    ```
    
-4. To run in cli mode, do:
-   ```bash
-   make run-cli # default
-
-   # Or
-
-   ./mandelbrot [width] [height] [iterations]
+3. Do
+   ```dotenv
+   docker-compose up --build -d
    ```
+   
+4. Add A record of your public ip to the registrar
 
-5. To run in gui mode, do:
-   ```bash
-   make run-gui # default
+5. Access http://[YOUR_PUBLIC_IP]:81, and confugure the proxy
+    login:
+    - username: admin@example.com
+    - password: changeme
+  
+   then, change your credentials.   
 
-   # Or
-
-   ./mandelbrot_gui
+5. In the NPM -> Details, do:
+    - Add proxy host, fill the domain names, http scheme, forward hostname (love-notes-app), forward port 6969. Then, turn on the Block Common Exploits and Websocket Supports
+    - Save config
+  
+6. Setup SSL, NPM -> SSL:
+    - Click "Request a new SSL Certificate"
+    - Save config
+  
+7. Add nginx config, NPM -> Advanced:
+    - Insert this code:
+    ```bash
+   location ~ ^/(main|calculate|notes)/$ {
+    rewrite ^/(.*)/$ /$1 permanent;
+    }
    ```
-
-6. Cheatsheets for GUI
-   ```bash
-   left mouse drag         : zoom
-   right mouse drag        : pan
-   'R' or 's'              : Reset to original position
-   'S' or 's'              : Save the current mandelbrot set view
-   'J' or 'j'              : Save the current position julia set
-   mouse scroll            : zoom in/out (alternative)
-   escape button (esc)     : return to input window
-   ```
+8. Access the server on [DOMAIN_NAME]/main
+<br/>
 
 
 > [!IMPORTANT]
-> You can access the web server on https://w1ntr.space/main
-
+> You can access the owner's web server on https://w1ntr.space/main
