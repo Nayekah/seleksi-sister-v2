@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  assembly-http-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: assembly-http-server
+    restart: unless-stopped
+    
+    # Port mapping - expose 6969 for Nginx Proxy Manager
+    ports:
+      - "6969:6969"
+    
+    # Environment variables
+    environment:
+      - TZ=UTC
+    
+    # Volumes for persistent data
+    volumes:
+      - ./notes_data:/app/notes_data
+      - ./logs:/app/logs
+    
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '0.5'
+        reservations:
+          memory: 128M
+          cpus: '0.1'
+    
+    # Health check
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:6969/main"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    
+    # Logging configuration
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    
+    # Networks
+    networks:
+      - proxy-network
+
+networks:
+  proxy-network:
+    external: false
+    name: proxy-network
