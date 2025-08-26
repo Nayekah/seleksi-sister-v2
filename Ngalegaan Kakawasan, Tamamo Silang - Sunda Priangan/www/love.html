@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Love Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 50%, #ff9ff3 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            text-align: center;
+        }
+        h1 {
+            font-size: 3em;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        .form-container {
+            background: rgba(255,255,255,0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            margin: 20px 0;
+        }
+        input {
+            width: 300px;
+            padding: 15px;
+            margin: 10px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.1em;
+            text-align: center;
+            color: #333;
+        }
+        button {
+            background: #ff1744;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.2em;
+            cursor: pointer;
+            margin: 20px;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #d50000;
+        }
+        .result-box {
+            background: rgba(255,255,255,0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            margin: 20px 0;
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .result-content {
+            text-align: center;
+        }
+        .result-names {
+            font-size: 1.8em;
+            margin: 10px 0;
+        }
+        .result-percentage {
+            font-size: 3em;
+            color: #ffeb3b;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            margin: 10px 0;
+        }
+        .result-message {
+            font-size: 1.3em;
+            margin: 10px 0;
+        }
+        .result-placeholder {
+            font-size: 1.2em;
+            opacity: 0.7;
+            font-style: italic;
+        }
+        .footer {
+            margin-top: 50px;
+            font-style: italic;
+            opacity: 0.7;
+        }
+        .link {
+            color: #ffeb3b;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        p {
+            font-size: 1.2em;
+            margin: 15px 0;
+            opacity: 0.9;
+        }
+        .navigation {
+            margin: 30px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Love Calculator</h1>
+        <div class="form-container">
+            <form action="/calculate" method="POST">
+                <input type="text" name="name1" placeholder="Your Name" required><br>
+                <input type="text" name="name2" placeholder="Partner Name" required><br>
+                <button type="submit">Calculate Love!</button>
+            </form>
+        </div>
+        
+        <div class="result-box">
+            <div class="result-content">
+                PLACEHOLDER_FOR_RESULT_CONTENT_HERE_123456789
+            </div>
+        </div>
+        
+        <div class="navigation">
+            <p><a href="/main" class="link">Watch Video</a> | <a href="/notes" class="link">View Notes</a></p>
+        </div>
+        
+        <div class="footer">
+            <p>Powered by x86-64 Assembly & Linux System Calls</p>
+        </div>
+    </div>
+</body>
+</html>

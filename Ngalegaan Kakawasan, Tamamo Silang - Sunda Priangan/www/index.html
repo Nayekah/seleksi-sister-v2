@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Assembly HTTP Server</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            text-align: center;
+        }
+        h1 {
+            font-size: 3em;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        .video-container {
+            margin: 20px 0;
+            padding: 20px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        .footer {
+            margin-top: 50px;
+            font-style: italic;
+            opacity: 0.7;
+        }
+        video {
+            border-radius: 10px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            max-width: 100%;
+            height: auto;
+        }
+        .link {
+            color: #ffeb3b;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        p {
+            font-size: 1.2em;
+            margin: 15px 0;
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome :3</h1>
+        <div class="video-container">
+            <video width="560" height="315" controls>
+                <source src="/eta.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+        <p>What's your eta? What's your eta?</p>
+        <div class="navigation">
+            <p><a href="/calculate" class="link">Love Calculator</a> | <a href="/notes" class="link">View Notes</a></p>
+        </div>
+        <div class="footer">
+            <p>Powered by x86-64 Assembly & Linux System Calls</p>
+        </div>
+    </div>
+</body>
+</html>

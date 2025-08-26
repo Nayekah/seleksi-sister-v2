@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Notes</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 50%, #a29bfe 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            text-align: center;
+        }
+        h1 {
+            font-size: 3em;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        .section {
+            background: rgba(255,255,255,0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            margin: 20px 0;
+        }
+        .current-note {
+            background: rgba(255,255,255,0.2);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            min-height: 120px;
+            text-align: left;
+            word-wrap: break-word;
+            white-space: pre-wrap;
+        }
+        .current-note.empty {
+            text-align: center;
+            font-style: italic;
+            opacity: 0.7;
+            color: #ddd;
+        }
+        textarea {
+            width: 100%;
+            height: 120px;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            color: #333;
+            resize: vertical;
+            max-height: 200px;
+            box-sizing: border-box;
+        }
+        .char-counter {
+            text-align: right;
+            margin: 5px 0;
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+        .char-counter.warning {
+            color: #ffeb3b;
+        }
+        .char-counter.error {
+            color: #ff5252;
+        }
+        button {
+            background: #00b894;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.1em;
+            cursor: pointer;
+            margin: 10px 5px;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #00a085;
+        }
+        button.edit {
+            background: #fdcb6e;
+        }
+        button.edit:hover {
+            background: #e17055;
+        }
+        button.delete {
+            background: #e17055;
+        }
+        button.delete:hover {
+            background: #d63031;
+        }
+        button.cancel {
+            background: #74b9ff;
+        }
+        button.cancel:hover {
+            background: #0984e3;
+        }
+        .form-container {
+            display: none;
+        }
+        .form-container.active {
+            display: block;
+        }
+        .view-container.hidden {
+            display: none;
+        }
+        .navigation {
+            margin: 30px 0;
+        }
+        .link {
+            color: #ffeb3b;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .footer {
+            margin-top: 50px;
+            font-style: italic;
+            opacity: 0.7;
+        }
+        p {
+            font-size: 1.2em;
+            margin: 15px 0;
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>My Notes</h1>
+        
+        <div class="section">
+            <div class="view-container" id="notesViewContainer">
+                <div class="current-note" id="currentNote">
+                    PLACEHOLDER_FOR_RESULT_CONTENT_HERE_123456789
+                </div>
+                <button onclick="showNotesCreateForm()" id="notesCreateBtn">Create Note</button>
+                <button class="edit" onclick="showNotesEditForm()" id="notesEditBtn">Edit Note</button>
+                <button class="delete" onclick="deleteNote()" id="notesDeleteBtn">Delete Note</button>
+            </div>
+            
+            <div class="form-container" id="notesFormContainer">
+                <form id="notesForm" method="POST" action="/notes">
+                    <textarea name="content" id="noteContent" placeholder="Enter your note here (max 250 characters)..." maxlength="250" oninput="updateCharCounter()"></textarea>
+                    <div class="char-counter" id="charCounter">0/250</div>
+                    <button type="submit">Save Note</button>
+                    <button type="button" class="cancel" onclick="hideNotesForm()">Cancel</button>
+                </form>
+            </div>
+        </div>
+        
+        <div class="navigation">
+            <p><a href="/main" class="link">Watch Video</a> | <a href="/calculate" class="link">Love Calculator</a></p>
+        </div>
+        
+        <div class="footer">
+            <p>Powered by x86-64 Assembly & Linux System Calls</p>
+        </div>
+    </div>
+
+    <script>
+        let isNotesEditing = false;
+        let hasNote = false;
+
+        function checkIfNoteExists() {
+            const noteContent = document.getElementById('currentNote');
+            const text = noteContent.textContent.trim();
+            
+            hasNote = text && 
+                     text !== 'No notes yet. Click "Create Note" to add your first note!' &&
+                     !text.includes('PLACEHOLDER_FOR_RESULT_CONTENT_HERE');
+            
+            const createBtn = document.getElementById('notesCreateBtn');
+            const editBtn = document.getElementById('notesEditBtn');
+            const deleteBtn = document.getElementById('notesDeleteBtn');
+            
+            if (hasNote) {
+                createBtn.style.display = 'none';
+                editBtn.style.display = 'inline-block';
+                deleteBtn.style.display = 'inline-block';
+                noteContent.classList.remove('empty');
+            } else {
+                createBtn.style.display = 'inline-block';
+                editBtn.style.display = 'none';
+                deleteBtn.style.display = 'none';
+                noteContent.classList.add('empty');
+                
+                if (text.includes('PLACEHOLDER_FOR_RESULT_CONTENT_HERE')) {
+                    noteContent.textContent = 'No notes yet. Click "Create Note" to add your first note!';
+                }
+            }
+        }
+
+        function showNotesCreateForm() {
+            isNotesEditing = false;
+            document.getElementById('noteContent').value = '';
+            document.getElementById('notesForm').action = '/notes';
+            document.getElementById('notesForm').method = 'POST';
+            showNotesForm();
+        }
+
+        function showNotesEditForm() {
+            isNotesEditing = true;
+            const currentContent = document.getElementById('currentNote').textContent.trim();
+            document.getElementById('noteContent').value = currentContent;
+            document.getElementById('notesForm').action = '/notes';
+            document.getElementById('notesForm').method = 'POST';
+            document.getElementById('notesForm').insertAdjacentHTML('beforeend', '<input type="hidden" name="_method" value="PUT">');
+            showNotesForm();
+        }
+
+        function showNotesForm() {
+            document.getElementById('notesViewContainer').classList.add('hidden');
+            document.getElementById('notesFormContainer').classList.add('active');
+            updateCharCounter();
+            document.getElementById('noteContent').focus();
+        }
+
+        function hideNotesForm() {
+            document.getElementById('notesViewContainer').classList.remove('hidden');
+            document.getElementById('notesFormContainer').classList.remove('active');
+
+            const hiddenMethod = document.querySelector('input[name="_method"]');
+            if (hiddenMethod) {
+                hiddenMethod.remove();
+            }
+        }
+
+        function updateCharCounter() {
+            const textarea = document.getElementById('noteContent');
+            const counter = document.getElementById('charCounter');
+            const length = textarea.value.length;
+            
+            counter.textContent = length + '/250';
+            
+            if (length > 200) {
+                counter.classList.add('warning');
+                counter.classList.remove('error');
+            }
+            if (length > 240) {
+                counter.classList.add('error');
+                counter.classList.remove('warning');
+            }
+            if (length <= 200) {
+                counter.classList.remove('warning', 'error');
+            }
+        }
+
+        function deleteNote() {
+            if (confirm('Are you sure you want to delete this note?')) {
+                fetch('/notes', {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    }
+                }).then(response => {
+                    console.log('Delete response status:', response.status);
+                    console.log('Delete response ok:', response.ok);
+                    
+                    if (response.status === 302 || response.status === 200 || response.status === 204) {
+                        location.reload();
+                    } else {
+                        alert('Failed to delete note (status: ' + response.status + ')');
+                    }
+                }).catch(error => {
+                    console.error('Delete note error:', error);
+                    console.log('Reloading page despite error...');
+                    location.reload();
+                });
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            checkIfNoteExists();
+        });
+    </script>
+</body>
+</html>

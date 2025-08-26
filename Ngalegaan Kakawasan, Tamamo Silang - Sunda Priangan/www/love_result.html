@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Love Calculator Result</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 50%, #ff9ff3 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            text-align: center;
+        }
+        h1 {
+            font-size: 3em;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        .result {
+            background: rgba(255,255,255,0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            margin: 20px 0;
+        }
+        .percentage {
+            font-size: 4em;
+            color: #ffeb3b;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        .names {
+            font-size: 2em;
+            margin: 20px 0;
+        }
+        .message {
+            font-size: 1.5em;
+            margin: 20px 0;
+        }
+        .footer {
+            margin-top: 50px;
+            font-style: italic;
+            opacity: 0.7;
+        }
+        .link {
+            color: #ffeb3b;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        p {
+            font-size: 1.2em;
+            margin: 15px 0;
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Love Calculator Result</h1>
+        <div class="result">
+            <div class="names">{{NAME1}} + {{NAME2}}</div>
+            <div class="percentage">{{PERCENTAGE}}%</div>
+            <div class="message">{{MESSAGE}}</div>
+        </div>
+        <p><a href="/calculate" class="link">Calculate Again</a> | <a href="/main" class="link">Watch Video</a></p>
+        <div class="footer">
+            <p>Powered by x86-64 Assembly & Linux System Calls</p>
+        </div>
+    </div>
+</body>
+</html>
