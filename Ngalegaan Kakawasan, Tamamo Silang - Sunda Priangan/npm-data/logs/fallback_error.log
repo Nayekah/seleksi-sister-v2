@@ -1,0 +1,14 @@
+2025/08/26 18:09:03 [warn] 175#175: could not build optimal proxy_headers_hash, you should increase either proxy_headers_hash_max_size: 512 or proxy_headers_hash_bucket_size: 64; ignoring proxy_headers_hash_bucket_size
+2025/08/26 18:09:54 [warn] 175#175: could not build optimal proxy_headers_hash, you should increase either proxy_headers_hash_max_size: 512 or proxy_headers_hash_bucket_size: 64; ignoring proxy_headers_hash_bucket_size
+2025/08/26 18:24:25 [warn] 378#378: 512 worker_connections are not enough, reusing connections
+2025/08/26 18:24:25 [alert] 378#378: *1394 512 worker_connections are not enough while connecting to upstream, client: 127.0.0.1, server: localhost-nginx-proxy-manager, request: "GET /favicon.ico HTTP/1.1", upstream: "http://127.0.0.1:80/favicon.ico", host: "20.198.243.250"
+2025/08/26 18:24:41 [error] 378#378: *1402 open() "/var/www/html/robots.txt" failed (2: No such file or directory), client: 206.168.34.204, server: localhost-nginx-proxy-manager, request: "GET /robots.txt HTTP/1.1", host: "20.198.243.250"
+2025/08/26 18:48:21 [warn] 378#378: 512 worker_connections are not enough, reusing connections
+2025/08/26 18:48:21 [alert] 379#379: *2538 512 worker_connections are not enough while connecting to upstream, client: 127.0.0.1, server: localhost-nginx-proxy-manager, request: "GET /favicon.ico HTTP/1.1", upstream: "http://127.0.0.1:80/favicon.ico", host: "20.198.243.250", referrer: "http://20.198.243.250/"
+2025/08/26 20:43:09 [error] 389#389: *3153 "/var/www/html/webui/index.html" is not found (2: No such file or directory), client: 65.49.1.132, server: localhost-nginx-proxy-manager, request: "GET /webui/ HTTP/1.1", host: "20.198.243.250"
+2025/08/26 21:37:57 [alert] 220#220: 512 worker_connections are not enough
+2025/08/26 21:37:57 [error] 221#221: *1385 recv() failed (104: Connection reset by peer) while reading response header from upstream, client: 127.0.0.1, server: localhost-nginx-proxy-manager, request: "GET /admin/assets/js/views/login.js HTTP/1.1", upstream: "http://127.0.0.1:80/admin/assets/js/views/login.js", host: "20.198.243.250"
+2025/08/26 23:46:13 [warn] 220#220: 512 worker_connections are not enough, reusing connections
+2025/08/26 23:46:13 [alert] 221#221: 512 worker_connections are not enough
+2025/08/26 23:46:13 [error] 220#220: *3063 recv() failed (104: Connection reset by peer) while reading response header from upstream, client: 127.0.0.1, server: localhost-nginx-proxy-manager, request: "GET /favicon.ico HTTP/1.1", upstream: "http://127.0.0.1:80/favicon.ico", host: "20.198.243.250"
+2025/08/26 23:46:39 [error] 220#220: *3072 open() "/var/www/html/.well-known/security.txt" failed (2: No such file or directory), client: 167.94.138.112, server: localhost-nginx-proxy-manager, request: "GET /.well-known/security.txt HTTP/1.1", host: "20.198.243.250"
