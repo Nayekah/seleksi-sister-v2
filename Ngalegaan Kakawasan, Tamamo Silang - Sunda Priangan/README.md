@@ -1,16 +1,16 @@
-# DeezNudds
+# Ngalegaan Kakawasan, Tamamo Silang - Sunda Priangan
 
 > Seleksi Asisten Laboratorium Sistem Paralel dan Terdistribusi 2025
 <p align="center">
     <img src="https://github.com/user-attachments/assets/9f821cf0-87ee-4977-b762-59754039ef4c">
 </p>
-    <h3 align="center">Will you make this asm web server for me? :begging:</h3>
+    <h3 align="center">Will you make this HTTP web server for me? Ehe~ :begging:</h3>
 
 ---
 
 ## About <a name="about"></a>
 
-<p align="justify">This project implements a simple DNS system running with internal network in linux using Debian, Python, Bind9, Apache Server, Nginx, and ufw </p>
+<p align="justify">This project implements a simple web server running with x86-64 assembly architecture on port 6969</p>
 
 ---
 
@@ -49,9 +49,7 @@ supported four Virtual Machines:
 
 
 > [!IMPORTANT]
-> This project is managed VirtualBox, so configure the network configurations based on the app you used
-
-Next, please refer to the each VM's implementations in the VMs folder
+> You can access the web server on https://w1ntr.space/main
 
 Demo of the program: https://youtu.be/JBx2hQUj5Do
 
