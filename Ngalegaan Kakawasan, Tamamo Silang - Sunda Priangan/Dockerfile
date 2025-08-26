@@ -8,16 +8,23 @@ RUN apt-get update \
 WORKDIR /app
 
 COPY server.asm ./
-COPY ./*.c ./
-
+COPY *.c ./
 COPY www/ ./www/
 
-# build
 RUN set -eux; \
+    echo "Building assembly server..."; \
     nasm -felf64 server.asm -o server.o; \
     ld server.o -o http_server; \
+    echo "Building C programs..."; \
     gcc -O2 lovecalc.c -o lovecalc; \
-    gcc -O2 notes.c -o notes
+    gcc -O2 notes.c -o notes; \
+    echo "Setting permissions..."; \
+    chmod +x http_server lovecalc notes; \
+    echo "Build completed successfully"; \
+    ls -la
+
+RUN mkdir -p ./notes_data
 
 EXPOSE 6969
-CMD ["/app/http_server"]
+
+CMD ["./http_server"]

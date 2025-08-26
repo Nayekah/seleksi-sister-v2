@@ -11,15 +11,13 @@ services:
     ports:
       - "80:80"     # HTTP
       - "443:443"   # HTTPS
-      - "81:81"     # NPM
+      - "81:81"     # NPM Admin
     environment:
       TZ: Asia/Jakarta
       DISABLE_IPV6: "true"
     volumes:
       - ./npm-data:/data
       - ./npm-letsencrypt:/etc/letsencrypt
-    depends_on:
-      - love-notes-app
     networks:
       - proxy
 
@@ -29,7 +27,10 @@ services:
       dockerfile: Dockerfile
     container_name: love-notes-app
     restart: unless-stopped
-    expose:
-      - "6969"
+    ports:
+      - "6969:6969"
+    environment:
+      - DEBUG=1
+    command: /bin/bash -c "echo 'Starting application...' && ls -la /app && /app/http_server"
     networks:
       - proxy
