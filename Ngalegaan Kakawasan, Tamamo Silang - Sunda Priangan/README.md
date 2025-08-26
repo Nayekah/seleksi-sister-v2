@@ -127,21 +127,109 @@
 
   Making new note with POST, edit with PUT, and delete with DELETE. Notes saved in the memory with .txt format
 
-
-
-
-
-
+<br/>
 
 - **Bonus**  
-  Implementing
+  ### Binary linking
+  Implemented with linking. Snippet:
 
-### Network Configurations
-   ```bash
-       netmask 255.255.255.0
-       network 192.168.1.0
-       broadcast 192.168.1.255
+  ```bash
+    call_love_calculator:
+        mov     rax, 2                      ; sys_open temp file
+        mov     rdi, .temp_file
+        mov     rsi, 0x241                  ; O_WRONLY | O_CREAT | O_TRUNC
+        mov     rdx, 0644o
+        syscall
+        
+        mov     rax, 57                     ; sys_fork
+        syscall
+        test    rax, rax
+        jz      .child_process
+        
+        ; Parent waits for child
+        mov     rax, 61                     ; sys_wait4
+        syscall
+        call    read_temp_file_result
+        ret
+    
+    .child_process:
+        ; Redirect stdout to temp file
+        mov     rax, 33                     ; sys_dup2
+        mov     rdi, rax                    ; temp file fd
+        mov     rsi, 1                      ; stdout
+        syscall
+        
+        ; Setup argv for execve
+        sub     rsp, 32
+        mov     qword [rsp], lovecalc_prog      ; "./lovecalc"
+        mov     qword [rsp + 8], name1_buffer   ; "Alice"
+        mov     qword [rsp + 16], name2_buffer  ; "Bob"
+        mov     qword [rsp + 24], 0             ; NULL terminator
+        
+        ; Execute external binary
+        mov     rax, 59                     ; sys_execve
+        mov     rdi, lovecalc_prog          ; "./lovecalc"
+        mov     rsi, rsp                    ; argv array
+        mov     rdx, 0                      ; envp (NULL)
+        syscall
+    
+    lovecalc_prog   db './lovecalc', 0
+    .temp_file      db '/tmp/love_result', 0
    ```
+
+<br/>
+
+  ### Simple template rendering
+  Changing html parameter with template rendering. Snippet:
+
+  ```bash
+    find_and_replace_placeholder:
+        mov     rsi, file_buffer            ; Search in loaded HTML
+        
+    .scan_file:
+        cmp     byte [rsi], 0
+        je      .not_found
+        
+        cmp     byte [rsi], 'P'             ; Look for placeholder start
+        jne     .next_char
+        
+        push    rsi
+        mov     rdi, placeholder
+        mov     rcx, 45                     ; Placeholder length
+        repe    cmpsb                       ; Compare strings
+        pop     rsi
+        jne     .next_char
+        
+        ; Found placeholder - replace it
+        mov     rdi, rsi
+        mov     al, ' '
+        mov     rcx, 45
+        rep     stosb                       ; Clear with spaces
+        
+        ; Insert dynamic content
+        mov     rdi, rsi
+        mov     rsi, result_content_buffer
+        
+    .copy_result:
+        lodsb
+        test    al, al
+        jz      .replacement_done
+        stosb
+        jmp     .copy_result
+    
+    .next_char:
+        inc     rsi
+        jmp     .scan_file
+   ```
+    
+<img width="2559" height="1386" alt="image" src="https://github.com/user-attachments/assets/dc05e2d5-231b-4098-ad86-44462d155542" />
+<img width="2559" height="1380" alt="image" src="https://github.com/user-attachments/assets/22d14b4e-2cdd-469b-afdf-d9ff34913801" />
+
+<br/>
+
+  ### Deploy
+  Deploying web so it can be accessed publicly. Implemented using Docker and Nginx Proxy Manager (NPM)
+
 --- 
 
 ## How to Run
