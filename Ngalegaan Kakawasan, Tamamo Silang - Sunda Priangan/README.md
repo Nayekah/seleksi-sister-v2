@@ -242,6 +242,7 @@
 - gcc (GNU compiler collection)
 - Docker
 - VPS (Virtual Private Server, if you want to deploy it)
+- Nginx Proxy Manager (NPM)
 
 <br/>
 
