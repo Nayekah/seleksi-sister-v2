@@ -13,6 +13,29 @@
 <p align="justify">This project implements a simple 4-bit computer in logisim 2.7.1</p>
 
 ---
+## How to Run
+
+### Requirements
+- Logisim 2.7.1
+- Java runtime
+
+<br/>
+
+### Running the Application
+1. Clone this repo
+   ```bash
+   https://github.com/Nayekah/seleksi-sister-v2.git
+   ```
+
+2. Navigate to the cloned repository.
+   ```bash
+   cd seleksi-sister-v2
+   cd "4-bit Fisherman"/
+   ```
+   
+3. Open logisim, and load main.circ
+
+<br/>
 
 > [!IMPORTANT]
 > You can see the demo of the program on https://youtu.be/_E_ZEQZv6QE
