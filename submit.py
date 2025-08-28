@@ -27,7 +27,7 @@ PUBLIC_KEY = "Keys/pub.key"
 usn = "13523090"
 pwd = "ghana"
 totp_secret = "kimminjeong" # my istri
-github = "https://github.com/Nayekah/seleksi-sister/Bagian-B"
+github = "https://github.com/Nayekah/seleksi-sister-v2"
 
 
 # Remote Execution Functions and some other functions
@@ -274,7 +274,7 @@ def submit_b(question: str, ans: int)  -> None:
         "math_question": question,
         "math_answer": int(ans),
         "signature": signature_b64,
-        "tahap": 1
+        "tahap": 2
     }
 
     print(f"\nPayload data to be sent: {payload}")
