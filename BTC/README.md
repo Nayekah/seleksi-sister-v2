@@ -2,7 +2,7 @@
 
 > Seleksi Asisten Laboratorium Sistem Paralel dan Terdistribusi 2025
 <p align="center">
-    <img src="https://github.com/user-attachments/assets/edeff108-284a-4d13-b9a7-deafa3e5d08e">
+    <img src="https://github.com/user-attachments/assets/edeff108-284a-4d13-b9a7-deafa3e5d08e" width="500">
 </p>
     <h3 align="center">When yh real-world blockchain audit</h3>
 
