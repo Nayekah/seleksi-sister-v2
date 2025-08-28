@@ -2,7 +2,7 @@
 
 > Seleksi Asisten Laboratorium Sistem Paralel dan Terdistribusi 2025
 <p align="center">
-    <img src="https://github.com/user-attachments/assets/f47ed610-7bf9-46ae-bc4d-9d4bae131a11">
+    <img src="https://github.com/user-attachments/assets/f47ed610-7bf9-46ae-bc4d-9d4bae131a11" width="500">
 </p>
     <h3 align="center">I love Indonesia</h3>
 
